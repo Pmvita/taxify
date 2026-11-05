@@ -55,7 +55,7 @@ Every user can **switch their person type and their province at any time** and g
 ## Constraints
 
 - **Tech:** Web = Next.js 16 + React 19 + TypeScript + Tailwind v4. Mobile = Expo (latest stable). Share `packages/taxify-core` (pure TS, no DOM). Toolchain = npm workspaces (no pnpm installed).
-- **Site root:** `C:\Users\user\Desktop\MAIN\Projects\full-staack`.
+- **Site root:** `C:\Users\user\Desktop\MAIN\Projects\taxify`.
 - **CRA data:** sourced from canada.ca (2025) + T4032 payroll guides; reference/disclaimer in-app + docs that real filers confirm with CRA.
 - **Pricing:** free trial included; paid per class (bundled, later).
 - **Deployment:** Web → Vercel (from this repo). Mobile → Expo (stores / EAS), not Vercel.

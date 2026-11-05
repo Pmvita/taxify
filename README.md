@@ -14,7 +14,7 @@
   <a href="https://www.npmjs.com/package/@taxify/core">
     <img src="https://img.shields.io/npm/v/@taxify/core.svg" alt="npm version" />
   </a>
-  <a href="https://vercel.com/new/<OWNER>/taxify">
+  <a href="https://vercel.com/Pmvita/taxify">
     <img src="https://img.shields.io/website?url=https://taxify.vercel.app&label=deploy&logo=vercel" alt="deploy" />
   </a>
 </div>

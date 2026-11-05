@@ -5,7 +5,7 @@
 
 **Goal:** Build Taxify — a premium Canadian tax calculator (web + Expo mobile) for employees, sole proprietors, and corporations, with province switching, a shared and thoroughly tested tax engine, Supabase auth, Stripe free-trial billing, and a ship-ready repo on GitHub + Vercel.
 
-**Architecture:** npm workspaces monorepo at `C:\Users\user\Desktop\MAIN\Projects\full-staack`.
+**Architecture:** npm workspaces monorepo at `C:\Users\user\Desktop\MAIN\Projects\taxify`.
 - `packages/taxify-core/` — pure-TS tax engine + versioned CRA rate data + public API.
 - `apps/web/` — Next.js 16 App Router UI.
 - `apps/mobile/` — Expo app reusing the core package.
@@ -38,10 +38,10 @@
 ## Task 0: Repo scaffold
 
 **Files:**
-- Create: `full-staack/package.json`, `full-staack/.gitignore`, `full-staack/LICENSE`, `full-staack/README.md`
-- Create: `full-staack/packages/taxify-core/package.json`, `tsconfig.json`
-- Create: `full-staack/apps/web/package.json`, `tsconfig.json`, `next.config.ts`, `src/app/layout.tsx`, `src/app/page.tsx`
-- Create: `full-staack/apps/mobile/` (Expo) — `package.json`, `app.json`, `src/app/_layout.tsx`, `src/app/page.tsx`
+- Create: `taxify/package.json`, `taxify/.gitignore`, `taxify/LICENSE`, `taxify/README.md`
+- Create: `taxify/packages/taxify-core/package.json`, `tsconfig.json`
+- Create: `taxify/apps/web/package.json`, `tsconfig.json`, `next.config.ts`, `src/app/layout.tsx`, `src/app/page.tsx`
+- Create: `taxify/apps/mobile/` (Expo) — `package.json`, `app.json`, `src/app/_layout.tsx`, `src/app/page.tsx`
 - Create: `scripts/`, `docs/superpowers/specs/2026-11-04-taxify-design.md` (already present)
 
 **Interfaces:** (none yet — scaffold only)

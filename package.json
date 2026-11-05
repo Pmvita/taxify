@@ -1,0 +1,30 @@
+{
+  "name": "taxify",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Taxify — premium Canadian tax calculator (web + Expo mobile)",
+  "workspaces": [
+    "packages/taxify-core",
+    "apps/web",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "build": "npm run build -w @taxify/core && npm run build -w taxify-web",
+    "test": "npm run test -w @taxify/core",
+    "typecheck": "npm run typecheck -w @taxify/core && npm run typecheck -w taxify-web && npm run typecheck -w taxify-mobile"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "^10.2.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-flow-strip-types": "^8.0.1",
+    "@babel/preset-flow": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.7",
+    "@expo/metro-config": "^58.0.21",
+    "metro": "^0.81.5",
+    "metro-react-native-babel-preset": "^0.77.0"
+  }
+}

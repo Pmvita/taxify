@@ -1,0 +1,25 @@
+{
+  "name": "taxify-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/App.tsx",
+  "type": "module",
+  "scripts": {
+    "dev": "expo start",
+    "build": "expo export --platform android",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@taxify/core": "^0.1.0",
+    "expo": "^53.0.0",
+    "expo-status-bar": "^2.0.0",
+    "react": "^19.0.0",
+    "react-native": "latest",
+    "react-native-screens": "^4.0.0",
+    "react-native-safe-area-context": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}

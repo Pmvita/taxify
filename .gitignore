@@ -1,0 +1,17 @@
+# See https://github.com/github/gitignore/blob/main/Node.gitignore
+node_modules/
+dist/
+.next/
+build/
+*.log
+.env
+.env.*
+!.env.example
+.next-env.json
+/types
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

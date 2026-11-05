@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Taxify",
+    "slug": "taxify",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "bundleIdentifier": "com.taxify.app",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.taxify.app",
+      "versionCode": 1
+    }
+  }
+}

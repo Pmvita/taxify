@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/npm/v/@taxify/core.svg" alt="npm version" />
   </a>
   <a href="https://vercel.com/Pmvita/taxify">
-    <img src="https://img.shields.io/website?url=https://taxify.vercel.app&label=deploy&logo=vercel" alt="deploy" />
+    <img src="https://img.shields.io/website?url=https://taxify-rose.vercel.app&label=deploy&logo=vercel" alt="deploy" />
   </a>
 </div>
 

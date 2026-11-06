@@ -23,8 +23,6 @@
   --shadow-lg: 0 18px 60px rgba(28,36,48,.14);
   --radius: 14px;
   --radius-sm: 9px;
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,14 +60,14 @@ html {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-body);
+  font-family: var(--font-body), system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 600;
   line-height: 1.2;
   color: var(--ink);
@@ -81,7 +79,7 @@ a {
 }
 
 button {
-  font-family: var(--font-body);
+  font-family: inherit;
   cursor: pointer;
   border: none;
   background: none;

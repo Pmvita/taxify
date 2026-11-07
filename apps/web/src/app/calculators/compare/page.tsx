@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { compareProvinces, getRateTable, currency } from '@taxify/core';
 import type { PersonType, ProvinceCode } from '@taxify/core';
 
@@ -23,198 +23,212 @@ const PERSON_TYPES: { value: PersonType; label: string }[] = [
   { value: 'corporation', label: 'Corporation' },
 ];
 
-function Select({
-  label,
-  hint,
-  id,
-  value,
-  onChange,
-  className = '',
-  options,
-}: {
-  label: string;
-  hint?: string;
-  id?: string;
-  value: string;
-  onChange: (v: string) => void;
-  className?: string;
-  options: { value: string; label: string }[];
-}) {
-  return (
-    <div className="w-full">
-      <label
-        htmlFor={id}
-        className="mb-1.5 block text-sm font-medium text-[var(--ink)]"
-      >
-        {label}
-      </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full h-12 px-4 rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] text-base shadow-sm outline-none transition appearance-none cursor-pointer focus:border-[var(--steel)] focus:ring-2 focus:ring-[var(--steel)]/20"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <svg
-        className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted)] pointer-events-none"
-        viewBox="0 0 16 16"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M4 6L8 10L12 6"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
-
-function NumberInput({
-  label,
-  hint,
-  id,
-  value,
-  onChange,
-  className = '',
-  ...rest
-}: {
-  label: string;
-  hint?: string;
-  id?: string;
-  value: number;
-  onChange: (v: number) => void;
-  className?: string;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>) {
-  return (
-    <div className="w-full">
-      <label
-        htmlFor={id}
-        className="mb-1.5 block text-sm font-medium text-[var(--ink)]"
-      >
-        {label}
-      </label>
-      <input
-        id={id}
-        type="number"
-        min={0}
-        step={5000}
-        value={value || ''}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-12 px-4 rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] text-base shadow-sm outline-none transition placeholder:font-normal placeholder:text-[var(--muted)] focus:border-[var(--steel)] focus:ring-2 focus:ring-[var(--steel)]/20"
-        {...rest}
-      />
-      {hint ? <p className="mt-1 text-xs text-[var(--muted)]">{hint}</p> : null}
-    </div>
-  );
-}
+const fieldClass =
+  'w-full h-12 px-4 rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] text-base shadow-sm outline-none transition focus:border-[var(--steel)] focus:ring-2 focus:ring-[var(--steel)]/20';
 
 export default function ComparePage() {
   const [personType, setPersonType] = useState<PersonType>('employee');
   const [income, setIncome] = useState<number>(100000);
   const [province, setProvince] = useState<ProvinceCode>('ON');
 
-  const rows = compareProvinces(getRateTable(2025), {
-    type: personType,
-    value: income,
-    province,
-  });
+  const table = useMemo(() => getRateTable(2025), []);
+  const rows = useMemo(
+    () =>
+      compareProvinces(table, {
+        type: personType,
+        value: income,
+        province,
+      }),
+    [table, personType, income, province],
+  );
+
+  const personLabel =
+    PERSON_TYPES.find((p) => p.value === personType)?.label ?? personType;
+  const provinceLabel = PROVINCES.find((p) => p.value === province)?.label ?? province;
 
   return (
-    <div>
-      <div className="max-w-3xl">
+    <div className="mx-auto w-full max-w-3xl pt-8 sm:pt-12">
+      <header className="text-center">
         <p className="text-sm font-medium text-[var(--steel)]">Compare</p>
         <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
           Compare provinces
         </h1>
-        <p className="mt-2 text-sm text-[var(--ink-soft)]">
-          See how the same type of income is taxed across all ten provinces.
-          Choose your income and person type to compare net outcomes.
+        <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--ink-soft)] leading-relaxed">
+          See how the same income is taxed across all ten provinces. Choose person type,
+          income, and a reference province — results update live for 2025.
         </p>
+      </header>
 
-        <div className="mt-6 space-y-5">
-          <div className="grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 space-y-6">
+        <section
+          aria-label="Comparison inputs"
+          className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elev)] p-5 sm:p-6"
+        >
+          <div className="grid gap-5 sm:grid-cols-3 sm:gap-6 sm:items-end">
             <div>
-              <Select
-                label="Person type"
-                value={personType}
-                onChange={(v) => setPersonType(v as PersonType)}
-                options={PERSON_TYPES}
-              />
+              <label
+                htmlFor="person-type"
+                className="mb-2 block text-sm font-medium text-[var(--ink)]"
+              >
+                Person type
+              </label>
+              <div className="relative">
+                <select
+                  id="person-type"
+                  value={personType}
+                  onChange={(e) => setPersonType(e.target.value as PersonType)}
+                  className={`${fieldClass} appearance-none cursor-pointer pr-10`}
+                >
+                  {PERSON_TYPES.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M4 6L8 10L12 6"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--muted)]">Tax treatment to compare</p>
             </div>
+
             <div>
-              <NumberInput
-                label="Income (CAD)"
-                hint="Enter the income you want to compare."
-                value={income}
-                onChange={setIncome}
-              />
+              <label
+                htmlFor="income"
+                className="mb-2 block text-sm font-medium text-[var(--ink)]"
+              >
+                Income
+              </label>
+              <div className="relative">
+                <span
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--muted)]"
+                  aria-hidden
+                >
+                  $
+                </span>
+                <input
+                  id="income"
+                  type="number"
+                  inputMode="decimal"
+                  value={income || ''}
+                  onChange={(e) => setIncome(Number(e.target.value))}
+                  className={`${fieldClass} pl-8 tabular-nums`}
+                  min={0}
+                  step={5000}
+                  placeholder="100000"
+                />
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--muted)]">Amount compared across provinces</p>
             </div>
+
             <div>
-              <Select
-                label="Reference province"
-                hint="The province used as the baseline for comparison."
-                value={province}
-                onChange={(v) => setProvince(v as ProvinceCode)}
-                options={PROVINCES}
-              />
+              <label
+                htmlFor="province"
+                className="mb-2 block text-sm font-medium text-[var(--ink)]"
+              >
+                Reference province
+              </label>
+              <div className="relative">
+                <select
+                  id="province"
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value as ProvinceCode)}
+                  className={`${fieldClass} appearance-none cursor-pointer pr-10`}
+                >
+                  {PROVINCES.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M4 6L8 10L12 6"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--muted)]">Baseline for ranking results</p>
             </div>
           </div>
+        </section>
 
-          <div className="overflow-x-auto">
+        <section
+          aria-label="Province comparison"
+          className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6"
+        >
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+            <h2 className="text-sm font-semibold text-[var(--ink)]">Results by province</h2>
+            <p className="text-xs text-[var(--muted)]">
+              {personLabel} · {currency(income)} · ref. {provinceLabel}
+            </p>
+          </div>
+
+          <div className="mt-5 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--border)] text-left text-xs uppercase tracking-wide text-[var(--muted)]">
-                  <th className="px-3 py-3 font-normal">Province</th>
-                  <th className="px-3 py-3 text-right font-normal">
-                    Net / (tax)
-                  </th>
-                  <th className="px-3 py-3 text-right font-normal">
-                    Total tax / (credit)
-                  </th>
+                  <th className="px-1 py-3 pr-3 font-medium sm:px-3">Province</th>
+                  <th className="px-1 py-3 text-right font-medium sm:px-3">Net / (tax)</th>
+                  <th className="px-1 py-3 text-right font-medium sm:px-3">Total tax</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--line)]">
-                {rows.map((r, i) => (
-                  <tr
-                    key={r.province}
-                    className={i === 0 ? 'bg-[var(--surface-2)]' : ''}
-                  >
-                    <td className="px-3 py-3 font-medium text-[var(--ink)]">
-                      {r.label}
-                    </td>
-                    <td
-                      className={`px-3 py-3 text-right font-semibold ${
-                        r.netPay >= 0
-                          ? 'text-[var(--ink)]'
-                          : 'text-[var(--orange-600)]'
-                      }`}
+                {rows.map((r) => {
+                  const isRef = r.province === province;
+                  return (
+                    <tr
+                      key={r.province}
+                      className={isRef ? 'bg-[var(--surface-2)]' : undefined}
                     >
-                      {currency(r.netPay)}
-                    </td>
-                    <td
-                      className={`px-3 py-3 text-right font-medium ${
-                        r.totalTax >= 0
-                          ? 'text-[var(--ink)]'
-                          : 'text-[var(--orange-600)]'
-                      }`}
-                    >
-                      {currency(r.totalTax)}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-1 py-3 pr-3 font-medium text-[var(--ink)] sm:px-3">
+                        {r.label}
+                        {isRef ? (
+                          <span className="ml-2 text-xs font-normal text-[var(--muted)]">
+                            reference
+                          </span>
+                        ) : null}
+                      </td>
+                      <td
+                        className={`px-1 py-3 text-right font-semibold tabular-nums sm:px-3 ${
+                          r.netPay >= 0 ? 'text-[var(--ink)]' : 'text-[var(--orange-600)]'
+                        }`}
+                      >
+                        {currency(r.netPay)}
+                      </td>
+                      <td
+                        className={`px-1 py-3 text-right font-medium tabular-nums sm:px-3 ${
+                          r.totalTax >= 0 ? 'text-[var(--ink)]' : 'text-[var(--orange-600)]'
+                        }`}
+                      >
+                        {currency(r.totalTax)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

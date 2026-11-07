@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { calculateEmployeeTax, getRateTable } from '@taxify/core';
 import type { ProvinceCode } from '@taxify/core';
 import { currency } from '@taxify/core';
@@ -18,111 +18,197 @@ const PROVINCES: { value: ProvinceCode; label: string }[] = [
   { value: 'SK', label: 'Saskatchewan' },
 ];
 
+const fieldClass =
+  'w-full h-12 px-4 rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] text-base shadow-sm outline-none transition focus:border-[var(--steel)] focus:ring-2 focus:ring-[var(--steel)]/20';
+
 export default function EmployeePage() {
   const [grossIncome, setGrossIncome] = useState<number>(75000);
   const [province, setProvince] = useState<ProvinceCode>('ON');
 
-  const result = calculateEmployeeTax(getRateTable(2025), {
-    grossIncome,
-    province,
-  });
+  const table = useMemo(() => getRateTable(2025), []);
+  const result = useMemo(
+    () => calculateEmployeeTax(table, { grossIncome, province }),
+    [table, grossIncome, province],
+  );
 
-  const cpp = result.cpp;
-  const ei = result.ei;
-  const federalTax = result.federalTax;
-  const provincialTax = result.provincialTax;
-  const totalIncomeTax = result.totalIncomeTax;
-  const netPay = result.netPay;
+  const provinceLabel = PROVINCES.find((p) => p.value === province)?.label ?? province;
+  const { cpp, ei, federalTax, provincialTax, totalIncomeTax, netPay } = result;
 
   return (
-    <div>
-      <div className="max-w-2xl">
+    <div className="mx-auto w-full max-w-3xl pt-8 sm:pt-12">
+      <header className="text-center">
         <p className="text-sm font-medium text-[var(--steel)]">Payroll — employee</p>
         <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
           Take-home pay
         </h1>
-        <p className="mt-2 text-sm text-[var(--ink-soft)]">
-          Enter your gross income to see the 2025 federal and provincial deductions, CPP and EI. Everything is computed on the personal income tax brackets — no black box.
+        <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--ink-soft)] leading-relaxed">
+          Enter your gross income and province to see 2025 federal and provincial tax, CPP, and EI —
+          recalculated live from the published brackets.
         </p>
+      </header>
 
-        <div className="mt-6 space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-sm font-medium text-[var(--ink)]">Gross income (CAD)</label>
-              <input
-                type="number"
-                value={grossIncome || ''}
-                onChange={(e) => setGrossIncome(Number(e.target.value))}
-                className="w-full h-11 px-3 rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] text-sm shadow-sm outline-none focus:border-[var(--steel)] focus:ring-2 focus:ring-[var(--steel)]/20"
-                min={0}
-                step={100}
-              />
-            </div>
+      <div className="mt-8 space-y-6">
+        <section
+          aria-label="Income and province"
+          className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elev)] p-5 sm:p-6"
+        >
+          <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 sm:items-end">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--ink)]">Province</label>
-              <select
-                value={province}
-                onChange={(e) => setProvince(e.target.value as ProvinceCode)}
-                className="w-full h-11 px-3 rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] text-sm shadow-sm outline-none focus:border-[var(--steel)] focus:ring-2 focus:ring-[var(--steel)]/20"
+              <label
+                htmlFor="gross-income"
+                className="mb-2 block text-sm font-medium text-[var(--ink)]"
               >
-                {PROVINCES.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
+                Gross income
+              </label>
+              <div className="relative">
+                <span
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--muted)]"
+                  aria-hidden
+                >
+                  $
+                </span>
+                <input
+                  id="gross-income"
+                  type="number"
+                  inputMode="decimal"
+                  value={grossIncome || ''}
+                  onChange={(e) => setGrossIncome(Number(e.target.value))}
+                  className={`${fieldClass} pl-8 tabular-nums`}
+                  min={0}
+                  step={100}
+                  placeholder="75000"
+                />
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--muted)]">Annual employment income (CAD)</p>
             </div>
+
+            <div>
+              <label
+                htmlFor="province"
+                className="mb-2 block text-sm font-medium text-[var(--ink)]"
+              >
+                Province of residence
+              </label>
+              <div className="relative">
+                <select
+                  id="province"
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value as ProvinceCode)}
+                  className={`${fieldClass} appearance-none cursor-pointer pr-10`}
+                >
+                  {PROVINCES.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M4 6L8 10L12 6"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--muted)]">
+                Sets provincial brackets{province === 'QC' ? ' and Quebec federal abatement' : ''}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          aria-label="Tax summary"
+          className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6"
+        >
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+            <h2 className="text-sm font-semibold text-[var(--ink)]">Annual breakdown</h2>
+            <p className="text-xs text-[var(--muted)]">{provinceLabel} · tax year 2025</p>
           </div>
 
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="text-center">
-                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">CPP</p>
-                <p className="mt-0.5 text-lg font-semibold text-[var(--ink)]">{currency(cpp)}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">EI</p>
-                <p className="mt-0.5 text-lg font-semibold text-[var(--ink)]">{currency(ei)}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Federal</p>
-                <p className="mt-0.5 text-lg font-semibold text-[var(--ink)]">{currency(federalTax)}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Provincial</p>
-                <p className="mt-0.5 text-lg font-semibold text-[var(--ink)]">{currency(provincialTax)}</p>
-              </div>
-              <div className="text-center sm:col-span-2">
-                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Total income tax</p>
-                <p className="mt-0.5 text-lg font-semibold text-[var(--ink)]">{currency(totalIncomeTax)}</p>
-              </div>
-              <div className="text-center sm:col-span-2">
-                <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Net pay (per period)</p>
-                <p className="mt-0.5 text-2xl font-bold text-[var(--steel)]">{currency(netPay)}</p>
-              </div>
-            </div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <Metric label="Federal tax" value={federalTax} />
+            <Metric label="Provincial tax" value={provincialTax} />
+            <Metric label="CPP" value={cpp} />
+            <Metric label="EI" value={ei} />
           </div>
 
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elev)] p-5">
-            <h2 className="mb-3 text-lg font-semibold text-[var(--ink)]">Where your income goes</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard label="Federal tax" value={federalTax} />
-              <StatCard label="Provincial tax" value={provincialTax} />
-              <StatCard label="CPP" value={cpp} />
-              <StatCard label="EI" value={ei} />
+          <div className="mt-5 border-t border-[var(--line)] pt-5">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
+                  Total income tax
+                </p>
+                <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--ink)]">
+                  {currency(totalIncomeTax)}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
+                  Net pay
+                </p>
+                <p className="mt-1 text-2xl sm:text-3xl font-bold tabular-nums text-[var(--steel)]">
+                  {currency(netPay)}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <section aria-label="Where income goes" className="pb-4">
+          <h2 className="text-center text-sm font-semibold text-[var(--ink)]">
+            Where your income goes
+          </h2>
+          <div className="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-4">
+            <ShareBar label="Federal" value={federalTax} total={grossIncome} />
+            <ShareBar label="Provincial" value={provincialTax} total={grossIncome} />
+            <ShareBar label="CPP" value={cpp} total={grossIncome} />
+            <ShareBar label="EI" value={ei} total={grossIncome} />
+          </div>
+        </section>
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-[var(--line)] bg-white p-4">
-      <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-[var(--ink)]">{currency(value)}</p>
+    <div>
+      <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">{label}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums text-[var(--ink)]">{currency(value)}</p>
+    </div>
+  );
+}
+
+function ShareBar({
+  label,
+  value,
+  total,
+}: {
+  label: string;
+  value: number;
+  total: number;
+}) {
+  const pct = total > 0 ? Math.min(100, (value / total) * 100) : 0;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-2">
+        <p className="text-xs font-medium text-[var(--muted)]">{label}</p>
+        <p className="text-sm font-semibold tabular-nums text-[var(--ink)]">{currency(value)}</p>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--surface-2)]">
+        <div
+          className="h-full rounded-full bg-[var(--steel)] transition-[width] duration-300 ease-out"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
     </div>
   );
 }

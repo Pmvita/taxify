@@ -79,11 +79,21 @@ describe('Taxify core — comprehensive suite', () => {
       const t = provincialTax(R, 'ON', 80000);
       expect(t).toBeCloseTo(5151.67, 2);
     });
-    it('Ontario net tax is zero below BPA floor', () => {
-      expect(provincialNetTax(R, 'ON', 80000)).toBe(0);
+    it('Ontario net tax applies BPA × lowest rate credit', () => {
+      const gross = provincialTax(R, 'ON', 80000);
+      const credit = (R.provinces.ON.bpa ?? 0) * (R.provinces.ON.brackets[0]?.rate ?? 0);
+      expect(provincialNetTax(R, 'ON', 80000)).toBeCloseTo(Math.max(0, gross - credit), 2);
+      expect(provincialNetTax(R, 'ON', 80000)).toBeGreaterThan(0);
+    });
+    it('changing province changes provincial net tax at the same income', () => {
+      const on = provincialNetTax(R, 'ON', 100000);
+      const ab = provincialNetTax(R, 'AB', 100000);
+      const bc = provincialNetTax(R, 'BC', 100000);
+      expect(on).not.toBeCloseTo(ab, 0);
+      expect(on).not.toBeCloseTo(bc, 0);
     });
     it('Quebec follows its own table', () => {
-      expect(quebecNetTax(R, 80000)).toBeGreaterThanOrEqual(0);
+      expect(quebecNetTax(R, 80000)).toBeGreaterThan(0);
     });
   });
 
@@ -93,11 +103,22 @@ describe('Taxify core — comprehensive suite', () => {
       expect(r.gross).toBe(80000);
       expect(r.cpp).toBe(3704.10);
       expect(r.ei).toBe(1077.48);
+      expect(r.provincialTax).toBeGreaterThan(0);
+      expect(r.federalTax).toBeGreaterThan(0);
       expect(r.netPay).toBeLessThan(80000);
     });
     it('CPP contributes up to the $4,430.10 cap', () => {
       const r = calculateEmployeeTax(R, { grossIncome: 149000, province: 'ON' });
       expect(r.cpp).toBe(4430.10);
+    });
+    it('province selection changes federal and provincial amounts', () => {
+      const on = calculateEmployeeTax(R, { grossIncome: 100000, province: 'ON' });
+      const qc = calculateEmployeeTax(R, { grossIncome: 100000, province: 'QC' });
+      const ab = calculateEmployeeTax(R, { grossIncome: 100000, province: 'AB' });
+      expect(on.provincialTax).not.toBeCloseTo(qc.provincialTax, 0);
+      expect(on.provincialTax).not.toBeCloseTo(ab.provincialTax, 0);
+      // Quebec federal abatement reduces federal tax vs Ontario
+      expect(qc.federalTax).toBeLessThan(on.federalTax);
     });
     it('breakdown arrays non-empty for taxes', () => {
       const r = calculateEmployeeTax(R, { grossIncome: 80000, province: 'ON' });

@@ -30,7 +30,7 @@ function makeJurisdiction(name: string, items: Array<[number, number]>, bpa: num
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const qc = makeJurisdiction('Quebec (Revenu Quebec)', [
-  [53255, 0.14], [106495, 0.19], [129590, 0.24],
+  [53255, 0.14], [106495, 0.19], [129590, 0.24], [129590, 0.2575],
 ], 16129);
 
 // Federal 2025
@@ -43,27 +43,29 @@ const federal2025 = makeJurisdiction('Canada (federal)', [
 ], 16129);
 
 // Provinces 2025
+// Final bracket uses a duplicated threshold so calcProgressive treats income
+// above that amount at the top rate (same pattern as federal).
 const provinces2025: Record<ProvinceCode, Jurisdiction> = {
   AB: makeJurisdiction('Alberta', [
-    [60000, 0.08], [151234, 0.10], [181481, 0.12], [241974, 0.13], [362961, 0.14],
+    [60000, 0.08], [151234, 0.10], [181481, 0.12], [241974, 0.13], [362961, 0.14], [362961, 0.15],
   ], 22323),
   BC: makeJurisdiction('British Columbia', [
-    [49279, 0.0506], [98560, 0.077], [113158, 0.105], [137407, 0.1229], [186306, 0.147], [259829, 0.168],
+    [49279, 0.0506], [98560, 0.077], [113158, 0.105], [137407, 0.1229], [186306, 0.147], [259829, 0.168], [259829, 0.205],
   ], 12932),
   MB: makeJurisdiction('Manitoba', [
-    [47564, 0.108], [101200, 0.1275],
+    [47564, 0.108], [101200, 0.1275], [101200, 0.174],
   ], 15780),
   NB: makeJurisdiction('New Brunswick', [
-    [51306, 0.094], [102614, 0.14], [190060, 0.16],
+    [51306, 0.094], [102614, 0.14], [190060, 0.16], [190060, 0.195],
   ], 13396),
   NL: makeJurisdiction('Newfoundland and Labrador', [
     [44192, 0.087], [88382, 0.145], [157792, 0.158], [220910, 0.178], [282214, 0.198], [564429, 0.208], [1128858, 0.213],
   ], 11067),
   NS: makeJurisdiction('Nova Scotia', [
-    [30507, 0.0879], [61015, 0.1495], [95883, 0.1667], [154650, 0.175],
+    [30507, 0.0879], [61015, 0.1495], [95883, 0.1667], [154650, 0.175], [154650, 0.21],
   ], 11744),
   ON: makeJurisdiction('Ontario', [
-    [52886, 0.0505], [105775, 0.0915], [150000, 0.1116], [220000, 0.1216],
+    [52886, 0.0505], [105775, 0.0915], [150000, 0.1116], [220000, 0.1216], [220000, 0.1316],
   ], 12747),
   PE: makeJurisdiction('Prince Edward Island', [
     [33328, 0.095], [64656, 0.1347], [105000, 0.166], [140000, 0.1762],
@@ -72,7 +74,7 @@ const provinces2025: Record<ProvinceCode, Jurisdiction> = {
     [53255, 0.14], [106495, 0.19], [129590, 0.24], [129590, 0.2575],
   ], 16129), // BPA placeholder; confirm figure with Revenu Quebec
   SK: makeJurisdiction('Saskatchewan', [
-    [53463, 0.105], [152750, 0.125],
+    [53463, 0.105], [152750, 0.125], [152750, 0.145],
   ], 19491),
 };
 

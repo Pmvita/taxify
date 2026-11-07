@@ -49,24 +49,42 @@ export function getRateTable(taxYear: TaxYear): RateTable {
   return rateTables[taxYear] ?? rateTables[2025];
 }
 
+/** Non-refundable personal amount credit = BPA × that jurisdiction's lowest rate. */
+function personalAmountCredit(bpa: number | undefined, brackets: RateTable['federal']['brackets']): number {
+  const lowestRate = brackets[0]?.rate ?? 0;
+  return (bpa ?? 0) * lowestRate;
+}
+
+/** Quebec residents receive a 16.5% abatement on basic federal tax. */
+const QUEBEC_FEDERAL_ABATEMENT = 0.165;
+
 export function federalTax(table: RateTable, income: number): TaxResult {
   return calcProgressive(table.federal.brackets, income);
 }
 
-export function federalNetTax(table: RateTable, income: number): number {
-  return Math.max(0, federalTax(table, income).tax - (table.federal.bpa ?? 0));
+export function federalNetTax(table: RateTable, income: number, province?: ProvinceCode): number {
+  const gross = federalTax(table, income).tax;
+  const credit = personalAmountCredit(table.federal.bpa, table.federal.brackets);
+  let net = Math.max(0, gross - credit);
+  if (province === 'QC') {
+    net = Math.max(0, net * (1 - QUEBEC_FEDERAL_ABATEMENT));
+  }
+  return net;
 }
 
 export function provincialTax(table: RateTable, province: ProvinceCode, income: number): number {
+  if (province === 'QC') return quebecTax(table, income);
   const j = table.provinces[province];
   if (!j) return 0;
   return calcProgressive(j.brackets, income).tax;
 }
 
 export function provincialNetTax(table: RateTable, province: ProvinceCode, income: number): number {
+  if (province === 'QC') return quebecNetTax(table, income);
   const j = table.provinces[province];
   if (!j) return 0;
-  return Math.max(0, provincialTax(table, province, income) - (j.bpa ?? 0));
+  const credit = personalAmountCredit(j.bpa, j.brackets);
+  return Math.max(0, provincialTax(table, province, income) - credit);
 }
 
 export function quebecTax(table: RateTable, income: number): number {
@@ -74,7 +92,8 @@ export function quebecTax(table: RateTable, income: number): number {
 }
 
 export function quebecNetTax(table: RateTable, income: number): number {
-  return Math.max(0, quebecTax(table, income) - (table.qpba ?? 0));
+  const credit = personalAmountCredit(table.qpba, table.quebec.brackets);
+  return Math.max(0, quebecTax(table, income) - credit);
 }
 
 export function cppEmployee(income: number): number {
@@ -93,12 +112,14 @@ export function calculateEmployeeTax(table: RateTable, input: EmployeeTaxInput):
   const { grossIncome, province } = input;
   const cpp = cppEmployee(grossIncome);
   const ei = eiEmployee(grossIncome);
-  const federalTaxCalc = federalNetTax(table, grossIncome);
+  const federalTaxCalc = federalNetTax(table, grossIncome, province);
   const provincialTaxCalc = provincialNetTax(table, province, grossIncome);
   const totalIncomeTax = federalTaxCalc + provincialTaxCalc;
   const netPay = grossIncome - cpp - ei - totalIncomeTax;
   const federalResult = federalTax(table, grossIncome);
-  const provincialResult = calcProgressive(table.provinces[province].brackets, grossIncome);
+  const provincialBrackets =
+    province === 'QC' ? table.quebec.brackets : table.provinces[province].brackets;
+  const provincialResult = calcProgressive(provincialBrackets, grossIncome);
   return { gross: grossIncome, cpp, ei, federalTax: federalTaxCalc, provincialTax: provincialTaxCalc, totalIncomeTax, netPay, breakdown: [federalResult, provincialResult] };
 }
 
@@ -107,7 +128,7 @@ export function calculateSoleProprietorTax(table: RateTable, input: SolePropriet
   const businessNetIncome = Math.max(0, revenue - expenses);
   const cpp = claimCpp ? cppEmployee(businessNetIncome) : 0;
   const ei = claimCpp ? eiEmployee(businessNetIncome) : 0;
-  const federalTaxCalc = federalNetTax(table, businessNetIncome);
+  const federalTaxCalc = federalNetTax(table, businessNetIncome, province);
   const provincialTaxCalc = provincialNetTax(table, province, businessNetIncome);
   const totalIncomeTax = federalTaxCalc + provincialTaxCalc;
   const estQuarterly = [totalIncomeTax / 4, totalIncomeTax / 4, totalIncomeTax / 4, totalIncomeTax / 4];
@@ -116,7 +137,7 @@ export function calculateSoleProprietorTax(table: RateTable, input: SolePropriet
 
 export function calculateCorporateTax(table: RateTable, input: CorporateInput): CorporateResult {
   const { taxableIncome, province } = input;
-  const federalTaxCalc = federalNetTax(table, taxableIncome);
+  const federalTaxCalc = federalNetTax(table, taxableIncome, province);
   const provincialTaxCalc = provincialNetTax(table, province, taxableIncome);
   const total = federalTaxCalc + provincialTaxCalc;
   const amtArefundable = taxableIncome * 0.2;

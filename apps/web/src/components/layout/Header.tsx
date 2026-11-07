@@ -47,16 +47,16 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <Link
-            href="/calculators/employee"
-            className="h-11 rounded-xl px-3 text-sm font-medium text-[var(--ink-soft)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)] transition"
+            href="/login"
+            className="h-11 rounded-xl border border-[var(--border)] px-4 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--surface-2)] hover:border-[var(--steel-200)] transition"
           >
             Sign in
           </Link>
           <Link
             href="/calculators/employee"
-            className="h-11 rounded-xl bg-[var(--steel)] text-white text-sm font-semibold shadow-sm hover:bg-[var(--steel-600)] transition"
+            className="h-11 rounded-xl bg-[var(--steel)] text-white px-5 text-sm font-semibold shadow-sm hover:bg-[var(--steel-600)] transition"
           >
             Try it free
           </Link>

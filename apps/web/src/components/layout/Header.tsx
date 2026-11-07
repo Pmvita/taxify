@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
 
 const nav = [
   { label: 'Home', href: '/' },
@@ -47,20 +46,12 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2.5">
-          <Link
-            href="/login"
-            className="h-11 rounded-xl border border-[var(--border)] px-4 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--surface-2)] hover:border-[var(--steel-200)] transition"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/calculators/employee"
-            className="h-11 rounded-xl bg-[var(--steel)] text-white px-5 text-sm font-semibold shadow-sm hover:bg-[var(--steel-600)] transition"
-          >
-            Try it free
-          </Link>
-        </div>
+        <Link
+          href="/calculators/employee"
+          className="hidden h-11 items-center rounded-xl bg-[var(--steel)] text-white px-5 text-sm font-semibold shadow-sm hover:bg-[var(--steel-600)] transition md:inline-flex"
+        >
+          Start calculating
+        </Link>
 
         <button
           className="ml-2 rounded-lg p-2 text-[var(--muted)] hover:bg-[var(--surface-2)] md:hidden"
@@ -95,7 +86,7 @@ export function SiteHeader() {
               className="mt-2 rounded-xl bg-[var(--steel)] text-white px-4 py-2.5 text-center text-sm font-semibold"
               onClick={() => setOpen(false)}
             >
-              Try it free
+              Start calculating
             </Link>
           </nav>
         </div>

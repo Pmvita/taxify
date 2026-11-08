@@ -11,35 +11,38 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 
 export async function POST(request: NextRequest) {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!stripeSecretKey) {
+    return NextResponse.json(
+      { error: 'STRIPE_SECRET_KEY is not configured' },
+      { status: 500 }
+    );
+  }
+  if (!webhookSecret) {
+    return NextResponse.json(
+      { error: 'STRIPE_WEBHOOK_SECRET is not configured' },
+      { status: 500 }
+    );
+  }
+
+  const signature = request.headers.get('stripe-signature');
+
   try {
-    const body = await request.json();
-    const signature = request.headers.get('stripe-signature');
+    // Read the raw body first — Stripe signature verification requires the
+    // exact bytes received. Do NOT call request.json() before this.
+    const rawBody = await request.text();
 
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-    if (!stripeSecretKey) {
-      return NextResponse.json(
-        { error: 'STRIPE_SECRET_KEY is not configured' },
-        { status: 500 }
-      );
-    }
-
-    // Dynamic import to avoid loading @stripe/stripe-js on the client side.
     const { Stripe } = await import('stripe');
-
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2025-02-24.acacia',
       typescript: true,
     });
 
     let event;
-
     try {
-      const rawBody = await request.text();
-      event = stripe.webhooks.constructEvent(
-        rawBody,
-        signature ?? '',
-        process.env.STRIPE_WEBHOOK_SECRET ?? ''
-      );
+      event = stripe.webhooks.constructEvent(rawBody, signature ?? '', webhookSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });

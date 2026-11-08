@@ -9,7 +9,7 @@
     "apps/mobile"
   ],
   "scripts": {
-    "build": "npm run build -w @taxify/core && npm run build -w taxify-web",
+    "build": "npm run build -w taxify-web",
     "test": "npm run test -w @taxify/core",
     "typecheck": "npm run typecheck -w @taxify/core && npm run typecheck -w taxify-web && npm run typecheck -w taxify-mobile"
   },

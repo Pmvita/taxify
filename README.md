@@ -14,9 +14,9 @@
   <a href="https://www.npmjs.com/package/@taxify/core">
     <img src="https://img.shields.io/npm/v/@taxify/core.svg" alt="npm version" />
   </a>
-  <a href="https://vercel.com/Pmvita/taxify">
-    <img src="https://img.shields.io/website?url=https://taxify-rose.vercel.app&label=deploy&logo=vercel" alt="deploy" />
-  </a>
+  <a href="https://vercel.com/pierres-projects-3ccb9894/taxify-canada">
+      <img src="https://img.shields.io/website?url=https://taxify-canada.vercel.app&label=deploy&logo=vercel" alt="deploy" />
+    </a>
 </div>
 
 **Taxify** is a premium Canadian tax calculator for employees, sole proprietors, and corporations. Pick your person type and province, enter your numbers, and get a transparent, bracket-by-bracket calculation across all 10 provinces and 3 territories — for both the web app and the React Native Expo app.

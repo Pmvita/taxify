@@ -41,6 +41,17 @@ export async function POST(request: NextRequest) {
       typescript: true,
     });
 
+    const origin = request.nextUrl.origin;
+    // Only allow same-origin redirect targets to prevent open redirects.
+    const safeSuccessUrl =
+      typeof successUrl === 'string' && successUrl.startsWith(origin)
+        ? successUrl
+        : `${origin}/pricing?active=pro&checkout=success`;
+    const safeCancelUrl =
+      typeof cancelUrl === 'string' && cancelUrl.startsWith(origin)
+        ? cancelUrl
+        : `${origin}/pricing?checkout=cancelled`;
+
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -55,8 +66,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: successUrl ?? `${request.nextUrl.origin}/pricing?active=pro&checkout=success`,
-      cancel_url: cancelUrl ?? `${request.nextUrl.origin}/pricing?checkout=cancelled`,
+      success_url: safeSuccessUrl,
+      cancel_url: safeCancelUrl,
       metadata: {
         plan: 'pro',
       },

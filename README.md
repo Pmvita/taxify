@@ -2,12 +2,12 @@
 
 <div align="center">
   <!-- badges will be populated on first CI run -->
-  <a href="https://github.com/<OWNER>/taxify/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/<OWNER>/taxify/ci.yml?branch=main&label=build&logo=github" alt="build" />
-  </a>
-  <a href="https://github.com/<OWNER>/taxify/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/<OWNER>/taxify/ci.yml?branch=main&label=test&logo=github-actions" alt="tests" />
-  </a>
+  <a href="https://github.com/Pmvita/taxify/actions/workflows/ci.yml">
+      <img src="https://img.shields.io/github/actions/workflow/status/Pmvita/taxify/ci.yml?branch=main&label=build&logo=github" alt="build" />
+    </a>
+    <a href="https://github.com/Pmvita/taxify/actions/workflows/ci.yml">
+      <img src="https://img.shields.io/github/actions/workflow/status/Pmvita/taxify/ci.yml?branch=main&label=test&logo=github-actions" alt="tests" />
+    </a>
   <a href="./LICENSE">
     <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" />
   </a>

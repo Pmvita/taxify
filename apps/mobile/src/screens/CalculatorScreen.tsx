@@ -11,7 +11,13 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
-import { calculateEmployeeTax, calculateSoleProprietorTax, calculateCorporateTax, getRateTable, currency } from '@taxify/core';
+import {
+  calculateEmployeeTax,
+  calculateSoleProprietorTax,
+  calculateCorporateTax,
+  getRateTable,
+  currency,
+} from '@taxify/core';
 import type { ProvinceCode, PersonType } from '@taxify/core';
 
 const PROVINCES: { value: ProvinceCode; label: string }[] = [
@@ -70,6 +76,19 @@ export function CalculatorScreen() {
     setResult(r);
   };
 
+  const pickProvince = (setter: (v: ProvinceCode) => void, label: string) => {
+    // @ts-ignore
+    const alertOptions = [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'OK', onPress: (text: string) => {
+            const v = PROVINCES.find((p) => p.label === text)?.value;
+            if (v) setter(v);
+          }, style: 'default' },
+    ] as any;
+    // @ts-ignore
+    Alert.alert('Province', 'Select province', PROVINCES.map((p) => ({ text: p.label })), alertOptions);
+  };
+
   const modes: { value: Mode; label: string }[] = [
     { value: 'employee', label: 'Employee' },
     { value: 'soleProprietor', label: 'Sole proprietor' },
@@ -114,7 +133,10 @@ export function CalculatorScreen() {
               </View>
               <View style={styles.field}>
                 <Text style={styles.label}>Province</Text>
-                <TouchableOpacity style={styles.select} onPress={() => {}}>
+                <TouchableOpacity
+                  style={styles.select}
+                  onPress={() => pickProvince(setEmployeeProvince, 'province')}
+                >
                   <Text style={styles.selectText}>{employeeProvince}</Text>
                   <Text style={styles.chevron}>▾</Text>
                 </TouchableOpacity>
@@ -170,7 +192,10 @@ export function CalculatorScreen() {
             <View style={styles.row}>
               <View style={styles.field}>
                 <Text style={styles.label}>Province</Text>
-                <TouchableOpacity style={styles.select} onPress={() => {}}>
+                <TouchableOpacity
+                  style={styles.select}
+                  onPress={() => pickProvince(setProprietorProvince, 'province')}
+                >
                   <Text style={styles.selectText}>{proprietorProvince}</Text>
                   <Text style={styles.chevron}>▾</Text>
                 </TouchableOpacity>
@@ -225,7 +250,10 @@ export function CalculatorScreen() {
               </View>
               <View style={styles.field}>
                 <Text style={styles.label}>Province</Text>
-                <TouchableOpacity style={styles.select} onPress={() => {}}>
+                <TouchableOpacity
+                  style={styles.select}
+                  onPress={() => pickProvince(setCorpProvince, 'province')}
+                >
                   <Text style={styles.selectText}>{corpProvince}</Text>
                   <Text style={styles.chevron}>▾</Text>
                 </TouchableOpacity>

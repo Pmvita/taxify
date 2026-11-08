@@ -120,7 +120,10 @@ export function calculateEmployeeTax(table: RateTable, input: EmployeeTaxInput):
   const provincialBrackets =
     province === 'QC' ? table.quebec.brackets : table.provinces[province].brackets;
   const provincialResult = calcProgressive(provincialBrackets, grossIncome);
-  return { gross: grossIncome, cpp, ei, federalTax: federalTaxCalc, provincialTax: provincialTaxCalc, totalIncomeTax, netPay, breakdown: [federalResult, provincialResult] };
+  const federalRate = grossIncome > 0 ? (federalTaxCalc / grossIncome) * 100 : 0;
+  const provincialRate = grossIncome > 0 ? (provincialTaxCalc / grossIncome) * 100 : 0;
+  const totalRate = grossIncome > 0 ? (totalIncomeTax / grossIncome) * 100 : 0;
+  return { gross: grossIncome, cpp, ei, federalTax: federalTaxCalc, provincialTax: provincialTaxCalc, totalIncomeTax, netPay, breakdown: [federalResult, provincialResult], federalRate, provincialRate, totalRate };
 }
 
 export function calculateSoleProprietorTax(table: RateTable, input: SoleProprietorInput): SoleProprietorResult {
@@ -132,7 +135,8 @@ export function calculateSoleProprietorTax(table: RateTable, input: SolePropriet
   const provincialTaxCalc = provincialNetTax(table, province, businessNetIncome);
   const totalIncomeTax = federalTaxCalc + provincialTaxCalc;
   const estQuarterly = [totalIncomeTax / 4, totalIncomeTax / 4, totalIncomeTax / 4, totalIncomeTax / 4];
-  return { revenue, expenses, businessNetIncome, cpp, ei, federalTax: federalTaxCalc, provincialTax: provincialTaxCalc, totalIncomeTax, estQuarterly };
+  const totalRate = businessNetIncome > 0 ? (totalIncomeTax / businessNetIncome) * 100 : 0;
+  return { revenue, expenses, businessNetIncome, cpp, ei, federalTax: federalTaxCalc, provincialTax: provincialTaxCalc, totalIncomeTax, estQuarterly, totalRate };
 }
 
 export function calculateCorporateTax(table: RateTable, input: CorporateInput): CorporateResult {

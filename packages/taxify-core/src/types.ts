@@ -31,6 +31,13 @@ export interface TaxResult {
   tax: number;
 }
 
+/** Tax application rate (total tax / gross income), expressed as a percentage. */
+export interface TaxRate {
+  federalRate: number;
+  provincialRate: number;
+  totalRate: number;
+}
+
 export interface EmployeeTaxResult {
   gross: number;
   cpp: number;
@@ -40,6 +47,12 @@ export interface EmployeeTaxResult {
   totalIncomeTax: number;
   netPay: number;
   breakdown: TaxResult[];
+  /** Effective federal tax rate (percentage). */
+  federalRate: number;
+  /** Effective provincial tax rate (percentage). */
+  provincialRate: number;
+  /** Effective total income tax rate (percentage). */
+  totalRate: number;
 }
 
 export interface SoleProprietorResult {
@@ -52,6 +65,8 @@ export interface SoleProprietorResult {
   provincialTax: number;
   totalIncomeTax: number;
   estQuarterly: number[];
+  /** Effective total income tax rate (percentage). */
+  totalRate: number;
 }
 
 export interface CorporateResult {

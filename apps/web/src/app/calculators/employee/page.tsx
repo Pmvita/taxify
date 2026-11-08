@@ -32,7 +32,7 @@ export default function EmployeePage() {
   );
 
   const provinceLabel = PROVINCES.find((p) => p.value === province)?.label ?? province;
-  const { cpp, ei, federalTax, provincialTax, totalIncomeTax, netPay } = result;
+  const { cpp, ei, federalTax, provincialTax, totalIncomeTax, netPay, federalRate, provincialRate, totalRate } = result;
 
   return (
     <div className="mx-auto w-full max-w-3xl pt-8 sm:pt-12">
@@ -134,14 +134,14 @@ export default function EmployeePage() {
           </div>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            <Metric label="Federal tax" value={federalTax} />
-            <Metric label="Provincial tax" value={provincialTax} />
+            <Metric label="Federal tax" value={federalTax} rate={federalRate} />
+            <Metric label="Provincial tax" value={provincialTax} rate={provincialRate} />
             <Metric label="CPP" value={cpp} />
             <Metric label="EI" value={ei} />
           </div>
 
           <div className="mt-5 border-t border-[var(--line)] pt-5">
-            <div className="flex items-end justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
                   Total income tax
@@ -152,12 +152,27 @@ export default function EmployeePage() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
-                  Net pay
+                  Effective rate
                 </p>
                 <p className="mt-1 text-2xl sm:text-3xl font-bold tabular-nums text-[var(--steel)]">
-                  {currency(netPay)}
+                  {totalRate.toFixed(1)}%
                 </p>
               </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-3 border-t border-[var(--line)] pt-4 text-xs text-[var(--muted)]">
+            <div className="rounded-lg bg-[var(--surface-2)] p-3">
+              <p className="text-[var(--muted)]">Federal rate</p>
+              <p className="text-sm font-semibold text-[var(--ink)]">{federalRate.toFixed(1)}%</p>
+            </div>
+            <div className="rounded-lg bg-[var(--surface-2)] p-3">
+              <p className="text-[var(--muted)]">Provincial rate</p>
+              <p className="text-sm font-semibold text-[var(--ink)]">{provincialRate.toFixed(1)}%</p>
+            </div>
+            <div className="rounded-lg bg-[var(--surface-2)] p-3">
+              <p className="text-[var(--muted)]">Tax year</p>
+              <p className="text-sm font-semibold text-[var(--steel)]">2025</p>
             </div>
           </div>
         </section>
@@ -178,11 +193,12 @@ export default function EmployeePage() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function Metric({ label, value, rate }: { label: string; value: number; rate?: number }) {
   return (
     <div>
       <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">{label}</p>
       <p className="mt-1 text-xl font-semibold tabular-nums text-[var(--ink)]">{currency(value)}</p>
+      {rate !== undefined ? <p className="mt-0.5 text-xs text-[var(--muted)]">Effective rate: {rate.toFixed(1)}%</p> : null}
     </div>
   );
 }

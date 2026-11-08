@@ -1,7 +1,5 @@
 {
+  "framework": "nextjs",
   "installCommand": "npm install --no-audit --no-fund",
-  "buildCommand": "npm run build -w taxify-web",
-  "devCommand": "npm run dev -w taxify-web",
-  "outputDirectory": "apps/web/.next",
-  "framework": "nextjs"
+  "buildCommand": "npm run build -w taxify-web"
 }

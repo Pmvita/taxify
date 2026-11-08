@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { calculateEmployeeTax, getRateTable } from '@taxify/core';
 import type { ProvinceCode } from '@taxify/core';
 import { currency } from '@taxify/core';
+import { CountUp } from '@/components/CountUp';
 
 const PROVINCES: { value: ProvinceCode; label: string }[] = [
   { value: 'AB', label: 'Alberta' },
@@ -35,19 +36,34 @@ export default function EmployeePage() {
   const { cpp, ei, federalTax, provincialTax, totalIncomeTax, netPay, federalRate, provincialRate, totalRate } = result;
 
   return (
-    <div className="mx-auto w-full max-w-3xl pt-8 sm:pt-12">
+    <div className="mx-auto w-full max-w-3xl px-5 pt-8 sm:px-8 sm:pt-12">
       <header className="text-center">
         <p className="text-sm font-medium text-[var(--steel)]">Payroll — employee</p>
-        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">
+        <h1 className="mt-2 font-display text-3xl tracking-tight text-[var(--ink)] sm:text-4xl">
           Take-home pay
         </h1>
-        <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--ink-soft)] leading-relaxed">
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[var(--ink-soft)]">
           Enter your gross income and province to see 2025 federal and provincial tax, CPP, and EI —
           recalculated live from the published brackets.
         </p>
       </header>
 
       <div className="mt-8 space-y-6">
+        <section
+          aria-label="Net take-home"
+          className="rounded-2xl border border-[var(--steel-200)] bg-[var(--bg-elev)] p-6 text-center shadow-[var(--shadow-sm)] sm:p-8"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+            Estimated net pay
+          </p>
+          <p className="mt-2 font-display text-4xl tabular-nums text-[var(--glacier)] sm:text-5xl">
+            <CountUp value={netPay} format={(n) => currency(n)} />
+          </p>
+          <p className="mt-2 text-sm text-[var(--ink-soft)]">
+            {provinceLabel} · after tax, CPP &amp; EI · tax year 2025
+          </p>
+        </section>
+
         <section
           aria-label="Income and province"
           className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elev)] p-5 sm:p-6"

@@ -1,0 +1,10 @@
+{
+  "name": "Taxify",
+  "short_name": "Taxify",
+  "description": "Canadian tax calculator for employees, sole proprietors, and corporations.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#e6edf4",
+  "theme_color": "#0b6e6a",
+  "lang": "en-CA"
+}

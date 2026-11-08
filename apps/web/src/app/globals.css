@@ -3,46 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --bg: #f7f5f2;
-  --bg-elev: #ffffff;
-  --surface: #faf8f5;
-  --surface-2: #f3f0ea;
-  --ink: #1c2430;
-  --ink-soft: #4b5563;
-  --muted: #7c8591;
-  --steel: #1f3a5f;
-  --steel-600: #2c4a73;
-  --steel-200: #dce6f0;
-  --orange: #f5a623;
-  --orange-600: #e28a00;
-  --orange-soft: #fdeee2;
-  --border: #dfe5ec;
-  --line: #e8eaed;
-  --shadow-sm: 0 1px 2px rgba(28,36,48,.05);
-  --shadow: 0 6px 24px rgba(28,36,48,.08);
-  --shadow-lg: 0 18px 60px rgba(28,36,48,.14);
+  /* Glacier Ledger — cool mist paper, teal ink, maple signal */
+  --bg: #e6edf4;
+  --bg-elev: #f7fafc;
+  --surface: #eef3f8;
+  --surface-2: #dfe7f0;
+  --ink: #0b1526;
+  --ink-soft: #3a4a5c;
+  --muted: #6b7c8f;
+  --steel: #0b6e6a;
+  --steel-600: #095955;
+  --steel-200: #c5e3e1;
+  --orange: #c81d25;
+  --orange-600: #a3161d;
+  --orange-soft: #f8e4e5;
+  --maple: #c81d25;
+  --glacier: #0b6e6a;
+  --ice: #7ec8c3;
+  --border: #c5d0dc;
+  --line: #d4dde8;
+  --shadow-sm: 0 1px 2px rgba(11, 21, 38, 0.05);
+  --shadow: 0 10px 36px rgba(11, 21, 38, 0.1);
+  --shadow-lg: 0 24px 64px rgba(11, 21, 38, 0.16);
   --radius: 14px;
   --radius-sm: 9px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141a24;
-    --bg-elev: #1c2430;
-    --surface: #20293a;
-    --surface-2: #273348;
-    --ink: #eceff5;
-    --ink-soft: #b9c2cf;
-    --muted: #8a96a6;
-    --steel: #6f8bb0;
-    --steel-600: #54739a;
-    --steel-200: #334760;
-    --orange: #ffb347;
-    --orange-600: #ff9e2c;
-    --orange-soft: #3a2e14;
-    --border: #33445c;
-    --line: #2a3548;
-  }
 }
 
 * {
@@ -58,18 +42,28 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(126, 200, 195, 0.28), transparent 55%),
+    radial-gradient(900px 500px at -10% 20%, rgba(200, 29, 37, 0.05), transparent 50%),
+    linear-gradient(180deg, #dfe8f1 0%, var(--bg) 32%, #edf2f7 100%);
+  background-attachment: fixed;
   color: var(--ink);
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), ui-sans-serif, sans-serif;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 
@@ -86,7 +80,7 @@ button {
 }
 
 ::selection {
-  background: var(--orange);
+  background: var(--glacier);
   color: #fff;
 }
 
@@ -102,9 +96,6 @@ button {
   border-radius: 999px;
   border: 2px solid var(--surface);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--steel-600);
-}
 
 .sr-only {
   position: absolute;
@@ -115,4 +106,74 @@ button {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+@keyframes taxify-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes taxify-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes taxify-sheen {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.taxify-rise {
+  animation: taxify-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.taxify-rise-delay-1 {
+  animation-delay: 0.08s;
+}
+
+.taxify-rise-delay-2 {
+  animation-delay: 0.16s;
+}
+
+.taxify-rise-delay-3 {
+  animation-delay: 0.24s;
+}
+
+.taxify-fade {
+  animation: taxify-fade 0.9s ease both;
+}
+
+.taxify-brand-mark {
+  background: linear-gradient(135deg, var(--glacier) 0%, #0f8a84 55%, var(--maple) 140%);
+  background-size: 160% 160%;
+  animation: taxify-sheen 8s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .taxify-rise,
+  .taxify-rise-delay-1,
+  .taxify-rise-delay-2,
+  .taxify-rise-delay-3,
+  .taxify-fade,
+  .taxify-brand-mark {
+    animation: none !important;
+  }
 }

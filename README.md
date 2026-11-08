@@ -1,58 +1,78 @@
 # Taxify
 
 <div align="center">
-  <!-- badges will be populated on first CI run -->
   <a href="https://github.com/Pmvita/taxify/actions/workflows/ci.yml">
-      <img src="https://img.shields.io/github/actions/workflow/status/Pmvita/taxify/ci.yml?branch=main&label=build&logo=github" alt="build" />
-    </a>
-    <a href="https://github.com/Pmvita/taxify/actions/workflows/ci.yml">
-      <img src="https://img.shields.io/github/actions/workflow/status/Pmvita/taxify/ci.yml?branch=main&label=test&logo=github-actions" alt="tests" />
-    </a>
+    <img src="https://img.shields.io/github/actions/workflow/status/Pmvita/taxify/ci.yml?branch=main&label=build&logo=github" alt="build" />
+  </a>
+  <a href="https://github.com/Pmvita/taxify/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Pmvita/taxify/ci.yml?branch=main&label=test&logo=github-actions" alt="tests" />
+  </a>
   <a href="./LICENSE">
     <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" />
   </a>
-  <a href="https://www.npmjs.com/package/@taxify/core">
-    <img src="https://img.shields.io/npm/v/@taxify/core.svg" alt="npm version" />
+  <a href="https://taxify-canada.vercel.app">
+    <img src="https://img.shields.io/website?url=https://taxify-canada.vercel.app&label=deploy&logo=vercel" alt="deploy" />
   </a>
-  <a href="https://vercel.com/pierres-projects-3ccb9894/taxify-canada">
-      <img src="https://img.shields.io/website?url=https://taxify-canada.vercel.app&label=deploy&logo=vercel" alt="deploy" />
-    </a>
 </div>
 
-**Taxify** is a premium Canadian tax calculator for employees, sole proprietors, and corporations. Pick your person type and province, enter your numbers, and get a transparent, bracket-by-bracket calculation across all 10 provinces and 3 territories — for both the web app and the React Native Expo app.
+**Taxify** is a Canadian tax calculator for employees, sole proprietors, and corporations. Pick your person type and province, enter your numbers, and get a transparent bracket-by-bracket estimate across all 10 provinces — on the web app and the Expo mobile shell that shares `@taxify/core`.
 
-> ⚠️ **Reference only.** Taxify computes *estimates* for planning. It does **not** file with the CRA (NETFILE). Always confirm with the Canada Revenue Agency.
+**Live:** https://taxify-canada.vercel.app
+
+> Reference only. Taxify computes *estimates* for planning. It does **not** file with the CRA (NETFILE). Always confirm with the Canada Revenue Agency.
+
+## Design system (Glacier Ledger)
+
+Cool mist paper with glacier teal and a maple signal accent — light, northern, not cream/terracotta or purple SaaS defaults.
+
+| Token | Hex | Role |
+| --- | --- | --- |
+| `--bg` | `#E6EDF4` | Page wash |
+| `--ink` | `#0B1526` | Primary text |
+| `--glacier` / `--steel` | `#0B6E6A` | Brand + result emphasis |
+| `--maple` / `--orange` | `#C81D25` | Primary CTA |
+| `--ice` | `#7EC8C3` | Step markers / soft data |
+
+**Typography:** Syne (display / wordmark) + Figtree (UI) via `next/font/google`.
+
+**Motion:** hero rise-ins, brand-mark sheen, net-pay count-up (respects `prefers-reduced-motion`). Hero uses a full-bleed glacier topographic texture in `apps/web/public/hero-glacier.jpg`.
 
 ## Run it
 
 ```bash
-# 1. Install dependencies
 npm install
+npm run dev      # http://localhost:3000
+npm test         # @taxify/core vitest suite
+npm run build
+```
 
-# 2. Development
-npm run dev            # web: http://localhost:3000
-npm run test -w @taxify/core
+### Windows path note
+
+If the repo lives under a folder with `)` (e.g. `1) Full-Stack Engineering`), Vitest/Vite can collect empty suites. Map a drive first:
+
+```bat
+subst T: "C:\Users\user\Desktop\MAIN\Projects\1) Full-Stack Engineering\taxify"
+cd /d T:\
+npm test
 ```
 
 ## Tech stack
 
 | Layer | Choice |
 |---|---|
-| Web | Next.js 16 + React 19 + TypeScript + Tailwind v4 |
+| Web | Next.js 16 + React 19 + TypeScript + Tailwind |
 | Mobile | React Native (Expo) — shares `@taxify/core` |
-| Tax engine | Pure TypeScript — `packages/taxify-core` |
-| Auth | Supabase (email + OAuth) |
-| Billing | Stripe (3 paid tiers, 14-day free trial) |
+| Tax engine | Pure TypeScript — `packages/taxify-core` (27 Vitest cases) |
+| Auth / billing | Supabase + Stripe hooks optional; calculators stay free |
 
 ## Repo structure
 
 ```
 taxify/
-├── packages/taxify-core/   # tax engine + CRA rate data (tests)
-├── apps/web/               # Next.js 16 web app
+├── packages/taxify-core/   # tax engine + CRA rate data + tests
+├── apps/web/               # Next.js web app (Vercel)
 ├── apps/mobile/            # Expo mobile app
-├── docs/                   # specs, plans, competitor analysis
-└── scripts/                # release / data tooling
+└── docs/                   # specs, plans, competitor analysis
 ```
 
 ## Docs

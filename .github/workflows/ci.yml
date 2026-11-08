@@ -9,10 +9,6 @@ on:
 jobs:
   test-core:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/taxify-core
-
     steps:
       - uses: actions/checkout@v4
 
@@ -27,15 +23,11 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run typecheck
-        run: npm run typecheck
+      - name: Run typecheck (core)
+        run: npm run typecheck -w @taxify/core
 
-  test-web:
+  typecheck-web:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
-
     steps:
       - uses: actions/checkout@v4
 
@@ -47,18 +39,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install workspaces
-        run: npm install --ignore-scripts
-
-      - name: Run typecheck
-        run: npm run typecheck
+      - name: Typecheck web
+        run: npm run typecheck -w taxify-web
 
   build-web:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
-
     steps:
       - uses: actions/checkout@v4
 
@@ -70,8 +55,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install workspaces
-        run: npm install --ignore-scripts
-
-      - name: Build
+      - name: Build web
         run: npm run build

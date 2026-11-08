@@ -47,7 +47,7 @@ export default function ComparePage() {
   const provinceLabel = PROVINCES.find((p) => p.value === province)?.label ?? province;
 
   return (
-    <div className="mx-auto w-full max-w-3xl pt-8 sm:pt-12">
+    <div className="mx-auto w-full max-w-3xl px-5 pt-8 sm:px-8 sm:pt-12">
       <header className="text-center">
         <p className="text-sm font-medium text-[var(--steel)]">Compare</p>
         <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">

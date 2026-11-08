@@ -9,31 +9,38 @@ const nav = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-[var(--border)] mt-12 sm:mt-16">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--steel)] text-white">
-              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
-                <path d="M7 3.5L13 10L7 16.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className="text-sm font-semibold text-[var(--steel)]">Taxify</span>
+    <footer className="mt-4 border-t border-[var(--border)] bg-[#0b1526] text-white">
+      <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <span className="taxify-brand-mark flex h-8 w-8 items-center justify-center rounded-lg text-white">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden>
+                  <path
+                    d="M4 14.5L10 4.5L16 14.5H4Z"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span className="font-display text-base tracking-tight">Taxify</span>
+            </div>
+            <p className="mt-3 max-w-sm text-xs leading-relaxed text-white/55">
+              Built in Canada. Estimates only — confirm with the CRA before filing.
+            </p>
           </div>
-          <p className="text-xs text-[var(--muted)]">
-            © {new Date().getFullYear()} Taxify. Built in Canada.
-          </p>
+          <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/65">
+            {nav.map((n) => (
+              <Link key={n.href} href={n.href} className="hover:text-white">
+                {n.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[var(--muted)]">
-          {nav.map((n) => (
-            <Link key={n.href} href={n.href}>{n.label}</Link>
-          ))}
-          <Link href="/calculators/compare">Competitor analysis</Link>
-          <Link href="/calculators/employee">2025 rates</Link>
-          <Link href="/calculators/employee">Privacy</Link>
-        </div>
-        <p className="mt-3 text-xs text-[var(--muted)]">
-          For estimation only. Figures are based on published 2025 federal and provincial rates and do not constitute tax, legal, or accounting advice. Verify with the CRA before relying on any figure.
+        <p className="mt-8 text-xs text-white/40">
+          © {new Date().getFullYear()} Taxify. Figures use published 2025 federal and provincial
+          rates and do not constitute tax, legal, or accounting advice.
         </p>
       </div>
     </footer>

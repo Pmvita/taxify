@@ -38,7 +38,7 @@ export default function CorporationPage() {
   const { federalTax, provincialTax, total, amtArefundable, effectiveRate } = result;
 
   return (
-    <div className="mx-auto w-full max-w-3xl pt-8 sm:pt-12">
+    <div className="mx-auto w-full max-w-3xl px-5 pt-8 sm:px-8 sm:pt-12">
       <header className="text-center">
         <p className="text-sm font-medium text-[var(--steel)]">Business — corporation</p>
         <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)]">

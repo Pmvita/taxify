@@ -19,8 +19,6 @@
 
 **Live:** https://taxify-canada.vercel.app
 
-> If the production hostname returns Vercel `INFINITE_LOOP_DETECTED` (508), the Hobby team hit the daily deployment quota while a `vercel.json` fix was rolling out. Re-run `vercel --prod` from a short path (`C:\dev\taxify` or `subst T:`) after the quota resets so commit `fe2d5e3+` can rebuild without `outputDirectory`.
-
 > Reference only. Taxify computes *estimates* for planning. It does **not** file with the CRA (NETFILE). Always confirm with the Canada Revenue Agency.
 
 ## Design system (Glacier Ledger)
